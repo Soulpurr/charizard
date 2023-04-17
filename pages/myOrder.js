@@ -1,7 +1,7 @@
 import React from "react";
-
-function Orders({order}) {
-  
+import Orders from "../models/orders";
+function myOrder({ order }) {
+  console.log(order);
   return (
     <div className="p-3">
       <div className="heading mt-5 font-semibold text-3xl p-4">My Orders</div>
@@ -13,12 +13,12 @@ function Orders({order}) {
           Pending
         </button>
       </div>
-      <div className="border-2 border-solid border-gray-400 p-3 rounded-xl">
-        <div className="content flex justify-center">
-          <div className="top flex flex-row space-x-40">
-            <p className="font-bold text-xl">Name</p>
-            <p className="font-mono">Id:1234564566</p>
-          </div>
+      {order.map((item)=>(<div className="border-2 border-solid w-auto border-gray-400 p-3 mt-4 rounded-xl overflow-auto" key={item._id}>
+        <div className="content ">
+          {Object.keys(item.product).map((detail)=>(<div className="top flex flex-row justify-between" key={Math.random()*Date.now()}>
+            <p className="font-bold text-xl">{item.product[detail].name}</p>
+            <p className="font-mono">Id:{item.orderId.slice(0,8)}...</p>
+          </div>))}
         </div>
         <div className="flex justify-center  mt-5 space-x-40  ">
           <div className="payment flex flex-col">
@@ -31,15 +31,18 @@ function Orders({order}) {
             <p className="font-semibold text-lg">12/11/22</p>
           </div>
         </div>
-      </div>
+      </div>))}
     </div>
   );
 }
 
-// export async function getServerSideProps(){
-//   let order=await Orders.find()
-//   return{
-//     props:order
-//   }
-// }
-export default Orders;
+export async function getServerSideProps() {
+  // let data=await fetch('http://localhost:3000/myOrder');
+  // let res=await data.json()
+  // console.log(res)
+  let order = await Orders.find();
+  return {
+    props: { order: JSON.parse(JSON.stringify(order)) },
+  };
+}
+export default myOrder;

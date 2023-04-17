@@ -1,15 +1,25 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import Homeitem from '../components/Homeitem'
+import Head from "next/head";
+import Image from "next/image";
+import Homeitem from "../components/Homeitem";
 import { useContext } from "react";
-import cartContext from '../context/cartContext';
-
-
-
+import cartContext from "../context/cartContext";
+import { getCookie } from "cookies-next";
+import { useEffect } from "react";
+import { useState } from "react";
 export default function Home() {
+  const [first, setfirst] = useState("");
+
   const context = useContext(cartContext);
-  const {existCart}=context;
-  existCart()
+  const { setcart } = context;
+  console.log(getCookie("cart"));
+  useEffect(() => {
+    setfirst("");
+  }, []);
+
+  console.log(getCookie('user'));
+
+  
+
   return (
     <>
       <Head>
@@ -18,14 +28,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-          
-        <div className="mt-2">
-          <img className='w-[150vw]'  src={'/bg.jpg'} alt='nopw' /> 
-          </div> 
+      <div className="mt-2">
+        <img className="w-[150vw]" src={"/bg.jpg"} alt="nopw" />
+      </div>
 
-          <Homeitem/>
-        
-        
+      <Homeitem />
     </>
-  )
+  );
 }

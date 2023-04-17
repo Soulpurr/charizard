@@ -6,6 +6,7 @@ import cartContext from "../../context/cartContext";
 import Product from "../../models/product";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
 
 function Slug(props) {
   const refreshVariant = (newcolor, newsize) => {
@@ -13,10 +14,10 @@ function Slug(props) {
     window.location = url;
   };
   const { product, variant } = props;
-  // console.log(product)
-  // console.log(variant)
+  console.log(product);
+  console.log(variant);
   const context = useContext(cartContext);
-  const { addToCart, existCart } = context;
+  const { addToCart } = context;
   // console.log(addToCart,clearCart,removeFromCart,cart,total,saveCart)
 
   const [color, setcolor] = useState(product.color);
@@ -31,13 +32,12 @@ function Slug(props) {
   };
 
   const checkAvailablity = async () => {
-    
     const pincode = await fetch("http://localhost:3000/api/pincodes");
     const pinJson = await pincode.json();
     // pin is comming as string and we have array of integers so we convert string into array
     if (pinJson.includes(parseInt(pin))) {
       setservice(true);
-      toast.success('Our service is available', {
+      toast.success("Our service is available", {
         position: "top-right",
         autoClose: 1000,
         hideProgressBar: false,
@@ -45,10 +45,10 @@ function Slug(props) {
         pauseOnHover: false,
         draggable: true,
         progress: undefined,
-        });
+      });
     } else {
       setservice(false);
-      toast.error('Sorry we are not available in your area', {
+      toast.error("Sorry we are not available in your area", {
         position: "top-right",
         autoClose: 1000,
         hideProgressBar: false,
@@ -56,10 +56,10 @@ function Slug(props) {
         pauseOnHover: false,
         draggable: true,
         progress: undefined,
-        });
+      });
     }
   };
-  existCart();
+
   return (
     <>
       <section className="text-gray-600 body-font overflow-hidden">
@@ -300,7 +300,7 @@ function Slug(props) {
               </div>
               <div className="flex">
                 <span className="title-font font-medium text-2xl text-gray-900">
-                  ${product.price}
+                  ₹{product.price}
                 </span>
                 <button className="flex ml-auto text-white bg-green-400 border-0 p-2 py-2 sm:px-6 focus:outline-none hover:bg-indigo-600 rounded">
                   Buy Now
@@ -375,8 +375,11 @@ function Slug(props) {
 }
 export async function getServerSideProps(context) {
   let products = await Product.findOne({ slug: context.query.slug });
-  
-  let variants = await Product.find({ title: products.title,category:products.category });
+
+  let variants = await Product.find({
+    title: products.title,
+    category: products.category,
+  });
   let colorSizeSlug = {}; //{red:{xl:{slug:'wear th dj'}}}
   for (let item of variants) {
     if (Object.keys(colorSizeSlug).includes(item.color)) {
@@ -386,7 +389,7 @@ export async function getServerSideProps(context) {
       colorSizeSlug[item.color][item.size] = { slug: item.slug };
     }
   }
-  
+  console.log(variants, products);
   return {
     props: {
       product: JSON.parse(JSON.stringify(products)),

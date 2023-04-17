@@ -1,6 +1,10 @@
 import React from "react";
-
+import { useContext } from "react";
+import cartContext from "../context/cartContext";
 function ForgetPass() {
+  const context = useContext(cartContext);
+  const {redirect} = context;
+  redirect()
   return (
     <div>
       {" "}

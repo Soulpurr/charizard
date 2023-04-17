@@ -1,27 +1,112 @@
 import React from "react";
 import { useContext } from "react";
 import cartContext from "../context/cartContext";
-import { BsFillCartFill } from "react-icons/bs";
-import { IoBagCheckOutline } from "react-icons/io5";
-import {
-  AiOutlineLogin,
-  AiOutlineClose,
-  AiOutlinePlus,
-  AiOutlineMinus,
-} from "react-icons/ai";
+
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { useState } from "react";
+import { useEffect } from "react";
 
 function Checkout() {
   const context = useContext(cartContext);
-  const {
-    addToCart,
-    clearCart,
-    removeFromCart,
-    cart,
-    total,
-    saveCart,
-    existCart,
-  } = context;
-  existCart();
+  const { addToCart, removeFromCart, cart, total, saveCart } = context;
+
+  console.log(cart);
+  const [cdetails, setcdetails] = useState({
+    fname: "",
+    lname: "",
+    email: "",
+    address: "",
+    city: "",
+    pincode: "",
+  });
+  const [disabled, setdisabled] = useState(true);
+  const handleChange = (e) => {
+    setcdetails({ ...cdetails, [e.target.name]: e.target.value });
+    cdetails.fname.length > 3 &&
+    cdetails.lname.length > 3 &&
+    cdetails.email.length > 3 &&
+    cdetails.address.length > 3 &&
+    cdetails.city.length > 3 &&
+    cdetails.pincode.length > 3
+      ? setdisabled(false)
+      : setdisabled(true);
+    console.log(cdetails);
+  };
+  const initializeRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+
+      document.body.appendChild(script);
+    });
+  };
+  const makePayment = async (e) => {
+    e.preventDefault();
+    const res = await initializeRazorpay();
+
+    if (!res) {
+      alert("Razorpay SDK Failed to load");
+      return;
+    }
+    // let data = await fetch("/api/razorpay", { method: "POST" });
+    let details = parseInt(total);
+
+    let data = await fetch("/api/razorpay", {
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        oid,
+        details,
+        name: cdetails.fname,
+        address: cdetails.address,
+        email: cdetails.email,
+        cart: cart,
+      }),
+    });
+
+    let response = await data.json();
+    const { id } = response;
+    let oid = id;
+
+    var options = {
+      key: process.env.KEY_ID, // Enter the Key ID generated from the Dashboard
+      amount: total, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      currency: "INR",
+      name: cdetails.fname + cdetails.lname,
+      description: "Test Transaction",
+      image: "https://example.com/your_logo",
+      order_id: id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      handler: function (response) {
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature);
+      },
+      prefill: {
+        name: cdetails.fname + cdetails.lname,
+        email: cdetails.email,
+        contact: "",
+      },
+      notes: {
+        address: "Razorpay Corporate Office",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+
   return (
     <div>
       <div className="mt-20">
@@ -35,7 +120,11 @@ function Checkout() {
             <h2 className="mb-4 font-bold md:text-xl text-heading ">
               Shipping Address
             </h2>
-            <form className="justify-center w-full mx-auto" method="post" action>
+            <form
+              className="justify-center w-full mx-auto"
+              method="post"
+              action
+            >
               <div className="">
                 <div className="space-x-0 lg:flex lg:space-x-4">
                   <div className="w-full lg:w-1/2">
@@ -46,7 +135,9 @@ function Checkout() {
                       First Name
                     </label>
                     <input
-                      name="firstName"
+                      value={cdetails.fname}
+                      onChange={handleChange}
+                      name="fname"
                       type="text"
                       placeholder="First Name"
                       className="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -60,7 +151,9 @@ function Checkout() {
                       Last Name
                     </label>
                     <input
-                      name="Last Name"
+                      value={cdetails.lname}
+                      onChange={handleChange}
+                      name="lname"
                       type="text"
                       placeholder="Last Name"
                       className="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -76,7 +169,9 @@ function Checkout() {
                       Email
                     </label>
                     <input
-                      name="Last Name"
+                      value={cdetails.email}
+                      onChange={handleChange}
+                      name="email"
                       type="text"
                       placeholder="Email"
                       className="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -92,8 +187,10 @@ function Checkout() {
                       Address
                     </label>
                     <textarea
+                      value={cdetails.address}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 text-xs border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
-                      name="Address"
+                      name="address"
                       cols="20"
                       rows="4"
                       placeholder="Address"
@@ -109,6 +206,8 @@ function Checkout() {
                       City
                     </label>
                     <input
+                      value={cdetails.city}
+                      onChange={handleChange}
                       name="city"
                       type="text"
                       placeholder="City"
@@ -120,10 +219,12 @@ function Checkout() {
                       htmlFor="postcode"
                       className="block mb-3 text-sm font-semibold text-gray-500"
                     >
-                      Postcode
+                      Pincode
                     </label>
                     <input
-                      name="postcode"
+                      value={cdetails.pincode}
+                      onChange={handleChange}
+                      name="pincode"
                       type="text"
                       placeholder="Post Code"
                       className="w-full px-4 py-3 text-sm border border-gray-300 rounded lg:text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
@@ -157,8 +258,12 @@ function Checkout() {
                   ></textarea>
                 </div>
                 <div className="mt-4">
-                  <button className="w-full px-6 py-2 text-blue-200 bg-blue-600 hover:bg-blue-900">
-                    Process
+                  <button
+                    disabled={disabled}
+                    className="disabled:bg-blue-300 w-full px-6 py-2 text-blue-200 bg-blue-600 hover:bg-blue-900"
+                    onClick={makePayment}
+                  >
+                    PAY {total}
                   </button>
                 </div>
               </div>
@@ -170,45 +275,49 @@ function Checkout() {
               <div className="mt-8">
                 <div className="">
                   <ol className="list-decimal font-semibold text-xl">
-                {Object.keys(cart).length===0 && <div className="font-semibold text-2xl my-4">No items in cart</div>}
-                  {Object.keys(cart).map((k) => {
-                    return (
-                      <li className="" key={k}>
-                        <div className="flex my-3">
-                          <div className="w-2/3">{cart[k].name}</div>
-                          <div className="w-1/3 flex justify-center items-center text-xl ">
-                            <AiOutlineMinus
-                              className="mx-1"
-                              onClick={() => {
-                                removeFromCart(
-                                  k,
-                                  1,
-                                  cart[k].price,
-                                  cart[k].name,
-                                  cart[k].size,
-                                  cart[k].variant
-                                );
-                              }}
-                            />{" "}
-                            {cart[k].qty}
-                            <AiOutlinePlus
-                              className="mx-1"
-                              onClick={() => {
-                                addToCart(
-                                  k,
-                                  1,
-                                  cart[k].price,
-                                  cart[k].name,
-                                  cart[k].size,
-                                  cart[k].variant
-                                );
-                              }}
-                            />
+                    {Object.keys(cart).length === 0 && (
+                      <div className="font-semibold text-2xl my-4">
+                        No items in cart
+                      </div>
+                    )}
+                    {Object.keys(cart).map((k) => {
+                      return (
+                        <li className="" key={k}>
+                          <div className="flex my-3">
+                            <div className="w-2/3">{cart[k].name}</div>
+                            <div className="w-1/3 flex justify-center items-center text-xl ">
+                              <AiOutlineMinus
+                                className="mx-1"
+                                onClick={() => {
+                                  removeFromCart(
+                                    k,
+                                    1,
+                                    cart[k].price,
+                                    cart[k].name,
+                                    cart[k].size,
+                                    cart[k].variant
+                                  );
+                                }}
+                              />{" "}
+                              {cart[k].qty}
+                              <AiOutlinePlus
+                                className="mx-1"
+                                onClick={() => {
+                                  addToCart(
+                                    k,
+                                    1,
+                                    cart[k].price,
+                                    cart[k].name,
+                                    cart[k].size,
+                                    cart[k].variant
+                                  );
+                                }}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    );
-                  })}
+                        </li>
+                      );
+                    })}
                   </ol>
                 </div>
               </div>
@@ -222,7 +331,7 @@ function Checkout() {
                 Shipping Tax<span className="ml-2">10</span>
               </div>
               <div className="flex items-center w-full py-4 text-sm font-semibold border-b border-gray-300 lg:py-5 lg:px-3 text-heading last:border-b-0 last:text-base last:pb-0">
-                Total<span className="ml-2">{total+10}</span>
+                Total<span className="ml-2">{total + 10}</span>
               </div>
             </div>
           </div>

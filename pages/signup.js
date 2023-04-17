@@ -3,17 +3,25 @@ import Link from "next/link";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useContext } from "react";
+import cartContext from "../context/cartContext";
+import { setCookie } from "cookies-next";
 
 function Signup() {
-  const [fName, setfName] = useState();
-  const [lName, setlName] = useState();
-  const [email, setemail] = useState();
-  const [password, setpassword] = useState();
+  const [data, setdata] = useState({
+    fName: "",
+    lName: "",
+    email: "",
+    password: "",
+  });
+
+  const context = useContext(cartContext);
+  const { redirect } = context;
+  redirect();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const data = { fName, lName, email, password };
       let res = await fetch("http://localhost:3000/api/signUp", {
         method: "POST", // or 'PUT'
         headers: {
@@ -22,11 +30,9 @@ function Signup() {
         body: JSON.stringify(data),
       });
       let response = await res.json();
-      setfName("");
-      setlName("");
-      setemail("");
-      setpassword("");
       console.log(response);
+      setCookie("user", response);
+      localStorage.setItem("user", response);
       toast.success("Your Account has been successfullly created", {
         position: "top-center",
         autoClose: 1000,
@@ -45,19 +51,12 @@ function Signup() {
         pauseOnHover: false,
         draggable: true,
         progress: undefined,
-        });
+      });
     }
   };
   const handleChange = (e) => {
-    if (e.target.name == "fName") {
-      setfName(e.target.value);
-    } else if (e.target.name == "lName") {
-      setlName(e.target.value);
-    } else if (e.target.name == "email") {
-      setemail(e.target.value);
-    } else if (e.target.name == "password") {
-      setpassword(e.target.value);
-    }
+    setdata({ ...data, [e.target.name]: e.target.value });
+    console.log(data);
   };
   return (
     <div>
@@ -105,7 +104,7 @@ function Signup() {
                     <input
                       onChange={handleChange}
                       name="fName"
-                      value={fName}
+                      value={data.fName}
                       className="appearance-none border rounded w-full py-2 px-3 text-grey-darker"
                       id="first_name"
                       type="text"
@@ -122,7 +121,7 @@ function Signup() {
                     <input
                       onChange={handleChange}
                       name="lName"
-                      value={lName}
+                      value={data.lName}
                       className="appearance-none border rounded w-full py-2 px-3 text-grey-darker"
                       id="last_name"
                       type="text"
@@ -140,7 +139,7 @@ function Signup() {
                   <input
                     onChange={handleChange}
                     name="email"
-                    value={email}
+                    value={data.email}
                     className="appearance-none border rounded w-full py-2 px-3 text-grey-darker"
                     id="email"
                     type="email"
@@ -157,7 +156,7 @@ function Signup() {
                   <input
                     onChange={handleChange}
                     name="password"
-                    value={password}
+                    value={data.password}
                     className="appearance-none border rounded w-full py-2 px-3 text-grey-darker"
                     id="password"
                     type="password"
