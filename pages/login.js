@@ -35,6 +35,7 @@ function Login({}) {
         body: JSON.stringify(data),
       });
       let response = await res.json();
+      console.log(response);
       if (response.success) {
         setCookie("user", response, { maxAge: 30 * 24 * 60 * 60 * 1000 });
 
