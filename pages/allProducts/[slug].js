@@ -5,13 +5,14 @@ import Product from "../../models/product";
 import { useContext } from "react";
 import cartContext from "../../context/cartContext";
 import Link from "next/link";
+import { useRouter } from "next/router";
 function AllProducts(props) {
   const context = useContext(cartContext);
   const { addToCart } = context;
 
   const { products } = props;
   // console.log(products);
-
+  const router = useRouter();
   return (
     <div>
       <div
