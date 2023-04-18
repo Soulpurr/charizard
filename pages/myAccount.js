@@ -6,14 +6,16 @@ import { useEffect } from "react";
 
 const MyAccount = () => {
   const token = getCookie("user");
-  const [user, setuser] = useState();
+  const [user, setuser] = useState("HII");
   useEffect(() => {
-    setuser(jwt.verify(JSON.parse(token).token, "POKEMONAWESOME"));
+    if (getCookie("user")) {
+      setuser(jwt.verify(JSON.parse(token).token, "POKEMONAWESOME"));
+    }
   }, []);
-//   console.log();
+  //   console.log();
   return (
     <div className="text-2xl text-red-500">
-      HII {user.user.fName} we are working on this section
+      HII {user?.user?.fName} we are working on this section
     </div>
   );
 };
