@@ -7,6 +7,7 @@ import Product from "../../models/product";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
+import connectMongo from "../../middleware/connectTomongo";
 
 function Slug(props) {
   const refreshVariant = (newcolor, newsize) => {
@@ -374,6 +375,7 @@ function Slug(props) {
   );
 }
 export async function getServerSideProps(context) {
+  await connectMongo;
   let products = await Product.findOne({ slug: context.query.slug });
 
   let variants = await Product.find({

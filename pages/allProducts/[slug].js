@@ -6,6 +6,7 @@ import { useContext } from "react";
 import cartContext from "../../context/cartContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import connectMongo from "../../middleware/connectTomongo";
 function AllProducts(props) {
   const context = useContext(cartContext);
   const { addToCart } = context;
@@ -78,6 +79,7 @@ function AllProducts(props) {
 export default AllProducts;
 
 export async function getServerSideProps(context) {
+  await connectMongo;
   let products = await Product.find({ category: context.query.slug });
   let data = {};
   for (let item of products) {
