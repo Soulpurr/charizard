@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LockClosedIcon } from "@heroicons/react/solid";
@@ -7,7 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useContext } from "react";
 import cartContext from "../context/cartContext";
-import { setCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 
 function Login({}) {
   const context = useContext(cartContext);
@@ -15,6 +15,11 @@ function Login({}) {
   const router = useRouter();
   const [email, setemail] = useState();
   const [password, setpassword] = useState();
+  useEffect(() => {
+    if (getCookie("user")) {
+      router.push("/");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +40,7 @@ function Login({}) {
 
         setemail("");
         setpassword("");
+        router.reload(window.location.pathname);
         router.push("/");
 
         toast.success("Login Successfully", {

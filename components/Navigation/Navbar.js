@@ -43,7 +43,10 @@ function Navbar() {
     }
   }, []);
   // console.log(user);
-
+  const handleLogout = async () => {
+    logout();
+    router.reload(window.location.pathname);
+  };
   const context = useContext(cartContext);
   const {
     addToCart,
@@ -155,7 +158,7 @@ function Navbar() {
                     </li>
                   </Link>
                   <li
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="py-2 hover:text-green-700 cursor-pointer font-semibold text-md"
                   >
                     Logout
@@ -291,7 +294,7 @@ function Navbar() {
                   </Link>
                 </li>
                 <li className="font-bold text-black sm:hover:text-green-400 sm:hover:animate-ping sm:text-black sm:text-2xl cursor-pointer sm:font-semibold">
-                  <Link href={"/smartphones"}>
+                  <Link href={"/allProducts/smartphones"}>
                     <a> Smartphones</a>
                   </Link>
                 </li>
