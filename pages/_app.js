@@ -1,18 +1,18 @@
 import "../styles/globals.css";
-import Footer from '../components/Footer'
-import Navbar from '../components/Navbar'
+import Footer from "../components/Navigation/Footer";
+import Navbar from "../components/Navigation/Navbar";
 import CartState from "../context/cartState";
 
 function MyApp({ Component, pageProps }) {
-  
-  return( 
+  return (
     <>
-    <CartState>
-    <Navbar/>  
-  <Component {...pageProps} />
-  <Footer/>
-  </CartState>
-  </>)
+      <CartState>
+        <Navbar />
+        <Component {...pageProps} />
+        <Footer />
+      </CartState>
+    </>
+  );
 }
 
-export default MyApp
+export default MyApp;

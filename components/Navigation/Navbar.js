@@ -1,4 +1,5 @@
 import React from "react";
+
 import { useState } from "react";
 import { BsFillCartFill } from "react-icons/bs";
 import { IoBagCheckOutline } from "react-icons/io5";
@@ -13,7 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { useContext } from "react";
-import cartContext from "../context/cartContext";
+import cartContext from "../../context/cartContext";
 import LoadingBar from "react-top-loading-bar";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -35,6 +36,13 @@ function Navbar() {
   const toggleDropdown = (value) => {
     setdrop(value);
   };
+  const [user, setuser] = useState(null);
+  useEffect(() => {
+    if (getCookie("user")) {
+      setuser(getCookie("user"));
+    }
+  }, []);
+  // console.log(user);
 
   const context = useContext(cartContext);
   const {
@@ -46,11 +54,9 @@ function Navbar() {
     total,
     saveCart,
     existUser,
-    user,
+
     key,
     logout,
-
-    setuser,
   } = context;
   useEffect(() => {
     if (getCookie("cart")) {
@@ -62,7 +68,7 @@ function Navbar() {
       fetchData();
     }
   }, []);
-  existUser();
+  // existUser();
 
   const [navbar, setnavbar] = useState(false);
   const [off, setoff] = useState(false);
@@ -107,11 +113,11 @@ function Navbar() {
           onLoaderFinished={() => setProgress(0)}
         />
         <div className={`${navbar ? "hidden" : "flex"} p-4 sm:hidden order-1`}>
-          <img
+          <Image
             src="/ham.png"
             alt=""
             width={23}
-            heigh={23}
+            height={23}
             onClick={handleMenu}
           />
         </div>
@@ -157,7 +163,7 @@ function Navbar() {
                 </ul>
               </div>
             )}
-            {user.value && (
+            {user && (
               <AiOutlineLogin className="h-5 w-5 sm:h-10 sm:w-10 cursor-pointer " />
             )}
           </span>
@@ -166,7 +172,7 @@ function Navbar() {
             onClick={toggleCart}
           />
 
-          {!user.value && (
+          {!user && (
             <Link href={"/login"}>
               <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                 LogIn
@@ -249,14 +255,16 @@ function Navbar() {
           </div>
         </div>
         <div className={`bg-black ${navbar ? "" : "hidden"} sm:block`}>
-          <img
-            src="/x.png"
-            alt=""
-            width={23}
-            heigh={23}
-            className="top-5 right-0 sm:hidden"
-            onClick={close}
-          ></img>
+          <div className="sm:hidden">
+            <Image
+              src="/x.png"
+              alt=""
+              height={1}
+              width={1}
+              className="top-5 right-0 sm:hidden"
+              onClick={close}
+            ></Image>
+          </div>
           {/* <h1 className="text-black top-0 left-0" onClick={close}>Close</h1> */}
           <div
             className={`flex flex-row justify-center space-x-20 absolute z-10  backdrop-blur w-[100%] h-[100%]  sm:order-2 items-center sm:sticky sm:top-0 sm:h-auto sm:bg-white sm:justify-between `}
@@ -273,13 +281,13 @@ function Navbar() {
                   </Link>
                 </li>
                 <li className="font-bold text-black sm:hover:text-green-400 sm:hover:animate-ping sm:text-black sm:text-2xl cursor-pointer sm:font-semibold">
-                  <Link href={"/allProducts/laptops"}>
-                    <a>Laptops</a>
+                  <Link href={"/allProducts/electronics"}>
+                    <a>Electronics</a>
                   </Link>
                 </li>
                 <li className="font-bold text-black sm:hover:text-green-400 sm:hover:animate-ping sm:text-black sm:text-2xl cursor-pointer sm:font-semibold">
-                  <Link href={"/allProducts/hoodies"}>
-                    <a>Hoodies</a>
+                  <Link href={"/allProducts/clothing"}>
+                    <a>Clothing</a>
                   </Link>
                 </li>
                 <li className="font-bold text-black sm:hover:text-green-400 sm:hover:animate-ping sm:text-black sm:text-2xl cursor-pointer sm:font-semibold">

@@ -5,7 +5,7 @@ const orderSchema = new Schema(
   {
     email: { type: String, required: true },
     orderId: { type: String, required: true },
-    paymentInfo: { type: Object, default: "Pending" },
+    paymentInfo: { type: String, default: "Pending" },
     product: { type: Object, required: true },
 
     date: { type: Date, default: Date.now },

@@ -27,7 +27,7 @@ function Checko() {
         body: JSON.stringify(data),
       });
       const da = await res.json();
-      console.log(da.session);
+      // console.log(da.session);
       const result = await stripe.redirectToCheckout({
         sessionId: da.session.id,
       });
@@ -35,7 +35,7 @@ function Checko() {
         alert(result.error.message);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   return (

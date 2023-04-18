@@ -11,8 +11,7 @@ import { setCookie } from "cookies-next";
 
 function Login({}) {
   const context = useContext(cartContext);
-  const { redirect } = context;
-  redirect();
+
   const router = useRouter();
   const [email, setemail] = useState();
   const [password, setpassword] = useState();
@@ -32,10 +31,11 @@ function Login({}) {
       });
       let response = await res.json();
       if (response.success) {
-        setCookie("user", response);
-        localStorage.setItem("token", response.token);
+        setCookie("user", response, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+
         setemail("");
         setpassword("");
+        router.push("/");
 
         toast.success("Login Successfully", {
           position: "top-center",

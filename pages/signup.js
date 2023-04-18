@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useContext } from "react";
 import cartContext from "../context/cartContext";
 import { setCookie } from "cookies-next";
+import { useRouter } from "next/router";
 
 function Signup() {
   const [data, setdata] = useState({
@@ -15,9 +16,8 @@ function Signup() {
     password: "",
   });
 
-  const context = useContext(cartContext);
-  const { redirect } = context;
-  redirect();
+  const router = useRouter();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -30,9 +30,9 @@ function Signup() {
         body: JSON.stringify(data),
       });
       let response = await res.json();
-      console.log(response);
-      setCookie("user", response);
-      localStorage.setItem("user", response);
+      // console.log(response);
+      setCookie("user", response, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+      router.push("/");
       toast.success("Your Account has been successfullly created", {
         position: "top-center",
         autoClose: 1000,
@@ -56,7 +56,7 @@ function Signup() {
   };
   const handleChange = (e) => {
     setdata({ ...data, [e.target.name]: e.target.value });
-    console.log(data);
+    // console.log(data);
   };
   return (
     <div>

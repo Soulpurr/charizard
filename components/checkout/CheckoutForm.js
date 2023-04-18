@@ -3,6 +3,7 @@ import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import cartContext from "../../context/cartContext";
 import CartItemDisplay from "./cartItemDisplay";
 import { loadStripe } from "@stripe/stripe-js";
+import { getCookie } from "cookies-next";
 
 const stripePromise = loadStripe(
   "pk_test_51K6w9HSCCzF8ZYwfSRDDD4DVbzHcAztUecen2zi9N7O4LakCHxHC05rZ6jIgc08QTij6LfzX0Q7RHP57GOjLIPTn00QeaGZ3Ib"
@@ -11,7 +12,7 @@ function CheckoutForm() {
   const context = useContext(cartContext);
   const { cart, total } = context;
 
-  console.log(cart);
+  // console.log(cart);
   const [cdetails, setcdetails] = useState({
     fname: "",
     lname: "",
@@ -19,6 +20,9 @@ function CheckoutForm() {
     address: "",
     city: "",
     pincode: "",
+    product: {},
+    amount: 0,
+    orderId: "1212",
   });
   const [disabled, setdisabled] = useState(true);
   const handleChange = (e) => {
@@ -31,10 +35,22 @@ function CheckoutForm() {
     cdetails.pincode.length > 3
       ? setdisabled(false)
       : setdisabled(true);
-    console.log(cdetails);
+    // console.log(cdetails);
   };
-
+  console.log(process.env.STRIPE_SECRET_KEY);
   const handlePayment = async (e) => {
+    e.preventDefault();
+    // console.log(getCookie("user"));
+    //Createing order
+    setcdetails({ ...cdetails, product: cart, amount: total });
+    let order = await fetch("/api/orders", {
+      method: "POST",
+      headers: {
+        auth: JSON.parse(getCookie("user")).token,
+      },
+      body: JSON.stringify(cdetails),
+    });
+
     let qty = 0;
     Object.keys(cart).map((item) => {
       qty = qty + cart[item].qty;
@@ -43,9 +59,7 @@ function CheckoutForm() {
       total: total,
       qty: qty,
     };
-    e.preventDefault();
     try {
-      let amount = 100;
       e.preventDefault();
       const stripe = await stripePromise;
       let res = await fetch("/api/stripe", {
@@ -56,10 +70,11 @@ function CheckoutForm() {
         body: JSON.stringify(data),
       });
       const stripePay = await res.json();
-      console.log(stripePay);
+      // console.log(stripePay);
       const result = await stripe.redirectToCheckout({
         sessionId: stripePay.session.id,
       });
+
       if (result.error) {
         alert(result.error.message);
       }

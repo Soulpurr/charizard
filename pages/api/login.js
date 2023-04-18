@@ -7,14 +7,14 @@ const handler = async (req, res) => {
     try {
       let success;
       let user = await User.findOne({ email: req.body.email });
-      console.log(req.body.email);
+      console.log(process.env.SECRET);
       if (user) {
         var pass = CryptoJS.AES.decrypt(user.password, process.env.SECRET);
         let secPass = pass.toString(CryptoJS.enc.Utf8);
         if (secPass == req.body.password) {
           success = true;
           let token = await jwt.sign({ user: user }, process.env.SECRET, {
-            expiresIn: "2d",
+            expiresIn: "7d",
           });
 
           return res.status(200).send({ token, success });
@@ -29,6 +29,7 @@ const handler = async (req, res) => {
       return res.status(200).send("error");
     }
   }
+  
 };
 
 export default ConnectToMongo(handler);

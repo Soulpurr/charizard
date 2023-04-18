@@ -10,7 +10,7 @@ function AllProducts(props) {
   const { addToCart } = context;
 
   const { products } = props;
-  console.log(products);
+  // console.log(products);
 
   return (
     <div>
@@ -55,10 +55,10 @@ function AllProducts(props) {
                         ))}
                       </h3>
                       <h3 className="text-gray-500 text-xs tracking-widest title-font mb-1">
-                        {products[item].color.map((col) => (
+                        {products[item].color?.map((col) => (
                           <button
                             key={col}
-                            className={`border-2 border-gray-300 ml-1 bg-${col.toLowerCase()}-400 rounded-full w-6 h-6 focus:outline-none`}
+                            className={`border-2 border-gray-300 ml-1 bg-${col?.toLowerCase()}-400 rounded-full w-6 h-6 focus:outline-none`}
                           ></button>
                         ))}
                       </h3>

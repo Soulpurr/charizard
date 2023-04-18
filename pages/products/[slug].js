@@ -14,8 +14,8 @@ function Slug(props) {
     window.location = url;
   };
   const { product, variant } = props;
-  console.log(product);
-  console.log(variant);
+  // console.log(product);
+  // console.log(variant);
   const context = useContext(cartContext);
   const { addToCart } = context;
   // console.log(addToCart,clearCart,removeFromCart,cart,total,saveCart)
@@ -389,7 +389,7 @@ export async function getServerSideProps(context) {
       colorSizeSlug[item.color][item.size] = { slug: item.slug };
     }
   }
-  console.log(variants, products);
+  // console.log(variants, products);
   return {
     props: {
       product: JSON.parse(JSON.stringify(products)),

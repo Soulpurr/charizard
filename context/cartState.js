@@ -1,5 +1,5 @@
 import React from "react";
-import { getCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
 import { useState } from "react";
 import { useEffect } from "react";
 import cartContext from "./cartContext";
@@ -37,7 +37,7 @@ function CartState(props) {
   };
   const saveCart = (cart) => {
     setCookie("cart", JSON.stringify(cart));
-    localStorage.setItem("cart", JSON.stringify(cart));
+    // localStorage.setItem("cart", JSON.stringify(cart));
 
     let subt = 0;
     let keys = Object.keys(cart);
@@ -100,34 +100,16 @@ function CartState(props) {
       }
     };
 
-    useEffect(() => {
-      if (localStorage.getItem("token")) {
-        setuser({ value: localStorage.getItem("token") });
-        setkey(Math.random());
-        fetchData();
-      }
-    }, [router.query]);
+   
   };
   const logout = () => {
-    localStorage.removeItem("token");
+    deleteCookie("user");
+    // localStorage.removeItem("token");
     router.push("/");
     setkey(Math.random());
     setuser({ value: null });
   };
-  const redirect = () => {
-    useEffect(() => {
-      if (localStorage.getItem("token")) {
-        router.push("/");
-      }
-    }, [router.query]);
-  };
-  const redirect2 = () => {
-    useEffect(() => {
-      if (!localStorage.getItem("token")) {
-        router.push("/");
-      }
-    }, [router.query]);
-  };
+
   return (
     <cartContext.Provider
       value={{
@@ -144,8 +126,6 @@ function CartState(props) {
         user,
         key,
         logout,
-        redirect,
-        redirect2,
       }}
     >
       {props.children}

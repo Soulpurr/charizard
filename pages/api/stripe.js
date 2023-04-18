@@ -1,8 +1,6 @@
 import ConnectToMongo from "../../middleware/mongoose";
 import Stripe from "stripe";
-const stripe = new Stripe(
-  "sk_test_51K6w9HSCCzF8ZYwfpZWcbuUsyPeyjtkVcfm1SRQ9ExoHJQlZ2k58Glb6cL6k4YGfdwuIv2A8QcF5v2UJovmiWWn700V5A4Exuq"
-);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {

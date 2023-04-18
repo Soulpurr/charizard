@@ -1,24 +1,13 @@
 import Head from "next/head";
 import Image from "next/image";
-import Homeitem from "../components/Homeitem";
+import Homeitem from "../components/Homepage/Homeitem";
 import { useContext } from "react";
 import cartContext from "../context/cartContext";
 import { getCookie } from "cookies-next";
 import { useEffect } from "react";
 import { useState } from "react";
 export default function Home() {
-  const [first, setfirst] = useState("");
-
   const context = useContext(cartContext);
-  const { setcart } = context;
-  console.log(getCookie("cart"));
-  useEffect(() => {
-    setfirst("");
-  }, []);
-
-  console.log(getCookie('user'));
-
-  
 
   return (
     <>

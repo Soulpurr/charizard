@@ -10,7 +10,7 @@ function Checkout() {
   const context = useContext(cartContext);
   const { addToCart, removeFromCart, cart, total, saveCart } = context;
 
-  console.log(cart);
+  // console.log(cart);
   const [cdetails, setcdetails] = useState({
     fname: "",
     lname: "",
@@ -30,7 +30,7 @@ function Checkout() {
     cdetails.pincode.length > 3
       ? setdisabled(false)
       : setdisabled(true);
-    console.log(cdetails);
+    // console.log(cdetails);
   };
   const initializeRazorpay = () => {
     return new Promise((resolve) => {
