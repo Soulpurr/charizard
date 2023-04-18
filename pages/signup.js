@@ -22,7 +22,7 @@ function Signup() {
     e.preventDefault();
 
     try {
-      let res = await fetch("http://localhost:3000/api/signUp", {
+      let res = await fetch("/api/signUp", {
         method: "POST", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
