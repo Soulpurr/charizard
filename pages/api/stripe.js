@@ -24,7 +24,9 @@ export default async function handler(req, res) {
         success_url: `${req.headers.origin}/success`,
         cancel_url: `${req.headers.origin}/cancele`,
       });
-
+      // const setupIntent = await stripe.setupIntents.create({
+      //   usage: "on_session",
+      // });
       res.send({ session });
     } catch (err) {
       res.status(err.statusCode || 500).json(err.message);

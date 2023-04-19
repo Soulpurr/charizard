@@ -262,8 +262,8 @@ function Navbar() {
             <Image
               src="/x.png"
               alt=""
-              height={1}
-              width={1}
+              height={23}
+              width={23}
               className="top-5 right-0 sm:hidden"
               onClick={close}
             ></Image>

@@ -37,19 +37,13 @@ function CheckoutForm() {
       : setdisabled(true);
     // console.log(cdetails);
   };
-  console.log(process.env.STRIPE_SECRET_KEY);
+
   const handlePayment = async (e) => {
     e.preventDefault();
     // console.log(getCookie("user"));
     //Createing order
-    setcdetails({ ...cdetails, product: cart, amount: total });
-    let order = await fetch("/api/orders", {
-      method: "POST",
-      headers: {
-        auth: JSON.parse(getCookie("user")).token,
-      },
-      body: JSON.stringify(cdetails),
-    });
+    cdetails.amount = total;
+    cdetails.product = cart;
 
     let qty = 0;
     Object.keys(cart).map((item) => {
@@ -70,7 +64,16 @@ function CheckoutForm() {
         body: JSON.stringify(data),
       });
       const stripePay = await res.json();
-      // console.log(stripePay);
+      cdetails.orderId = stripePay.session.id.toString();
+
+      let order = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          auth: JSON.parse(getCookie("user")).token,
+        },
+        body: JSON.stringify(cdetails),
+      });
+      console.log(stripePay);
       const result = await stripe.redirectToCheckout({
         sessionId: stripePay.session.id,
       });

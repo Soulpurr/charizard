@@ -5,6 +5,7 @@ import orders from "../../models/orders";
 var CryptoJS = require("crypto-js");
 const handler = async (req, res) => {
   if (req.method == "POST") {
+    console.log(req.body);
     const data = req.headers["auth"];
     if (data) {
       var decrypted = await jwt.verify(data, "POKEMONAWESOME");
@@ -17,7 +18,7 @@ const handler = async (req, res) => {
 
       let order = new orders({
         email,
-        orderId:orderId,
+        orderId: orderId,
         paymentInfo,
         product,
         address,

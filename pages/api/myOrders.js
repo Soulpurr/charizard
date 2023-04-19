@@ -1,16 +1,21 @@
-import ConnectToMongo from "../../middleware/mongoose";
-import Order from "../../models/orders";
-var CryptoJS = require("crypto-js");
 var jwt = require("jsonwebtoken");
-const handler = async (req, res) => {
-  let email = req.body.email;
-  let myOrder = await Order.find({ email: email });
-  res.send({ myOrder });
-  // console.log(token)
+import ConnectToMongo from "../../middleware/mongoose";
+import orders from "../../models/orders";
 
-  // let data = jwt.verify(token, process.env.SECRET);
-  // console.log(data)
-  // let orders = await Order.find({ email: data.user });
+var CryptoJS = require("crypto-js");
+const handler = async (req, res) => {
+  if (req.method == "GET") {
+    console.log(req.body);
+    const data = req.headers["auth"];
+    if (data) {
+      var decrypted = await jwt.verify(data, "POKEMONAWESOME");
+      req.data = decrypted;
+      let order = await orders.find({ user: req.data.user._id });
+      res.send(order);
+    } else {
+      res.send({ message: "Enter a valid token" });
+    }
+  }
 };
 
 export default ConnectToMongo(handler);
