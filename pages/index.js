@@ -22,3 +22,14 @@ export default function Home() {
     </>
   );
 }
+export async function getServerSideProps(context) {
+  connectMongo();
+  let products = await product.find({ category: "shirts" });
+  console.log(products);
+
+  // let product = await fetch("http://localhost:3000/api/getProducts/shirts");
+  // let data = await product.json();
+  return {
+    props: { products: JSON.parse(JSON.stringify(products)) }, // will be passed to the page component as props
+  };
+}
