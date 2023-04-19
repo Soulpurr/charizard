@@ -4,8 +4,8 @@ import Homeitem from "../components/Homepage/Homeitem";
 import product from "../models/product";
 import connectMongo from "../middleware/connectTomongo";
 
-export default function Home({ products }) {
-  console.log(products);
+export default function Home() {
+  // console.log(products);
   return (
     <>
       <Head>
@@ -21,15 +21,4 @@ export default function Home({ products }) {
       <Homeitem />
     </>
   );
-}
-export async function getServerSideProps(context) {
-  connectMongo();
-  let products = await product.find({ category: "shirts" });
- console.log(products)
-
-  // let product = await fetch("http://localhost:3000/api/getProducts/shirts");
-  // let data = await product.json();
-  return {
-    props: {products:JSON.parse(JSON.stringify(products))}, // will be passed to the page component as props
-  };
 }
