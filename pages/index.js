@@ -1,14 +1,10 @@
 import Head from "next/head";
-import Image from "next/image";
-import Homeitem from "../components/Homepage/Homeitem";
-import { useContext } from "react";
-import cartContext from "../context/cartContext";
-import { getCookie } from "cookies-next";
-import { useEffect } from "react";
-import { useState } from "react";
-export default function Home() {
-  const context = useContext(cartContext);
 
+import Homeitem from "../components/Homepage/Homeitem";
+import product from "../models/product";
+
+export default function Home({ products }) {
+  console.log(products);
   return (
     <>
       <Head>
@@ -24,4 +20,40 @@ export default function Home() {
       <Homeitem />
     </>
   );
+}
+export async function getServerSideProps(context) {
+  let products = await product.find({ category: "shirts" });
+  let data = {};
+  for (let item of products) {
+    if (item.title in data) {
+      if (
+        !data[item.title].color.includes(item.color) &&
+        item.availableQty > 0
+      ) {
+        data[item.title].color.push(item.color);
+        data[item.title].availableQty + item.availableQty;
+      }
+      if (!data[item.title].size.includes(item.size) && item.availableQty > 0) {
+        data[item.title].size.push(item.size);
+        data[item.title].availableQty + item.availableQty;
+      }
+      if (
+        (data[item.title].size.includes(item.size) && item.availableQty > 0) ||
+        (data[item.title].size.includes(item.color) && item.availableQty > 0)
+      ) {
+        data[item.title].availableQty += item.availableQty;
+      }
+    } else {
+      data[item.title] = JSON.parse(JSON.stringify(item));
+      if (item.availableQty > 0) {
+        data[item.title].color = [item.color];
+        data[item.title].size = [item.size];
+      }
+    }
+  }
+  // let product = await fetch("http://localhost:3000/api/getProducts/shirts");
+  // let data = await product.json();
+  return {
+    props: { products: JSON.parse(JSON.stringify(data)) }, // will be passed to the page component as props
+  };
 }

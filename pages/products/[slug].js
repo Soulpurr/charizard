@@ -6,7 +6,7 @@ import cartContext from "../../context/cartContext";
 import Product from "../../models/product";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect } from "react";
+
 import connectMongo from "../../middleware/connectTomongo";
 
 function Slug(props) {
@@ -375,7 +375,7 @@ function Slug(props) {
   );
 }
 export async function getServerSideProps(context) {
-  await connectMongo;
+  connectMongo();
   let products = await Product.findOne({ slug: context.query.slug });
 
   let variants = await Product.find({
