@@ -2,6 +2,7 @@ import Head from "next/head";
 
 import Homeitem from "../components/Homepage/Homeitem";
 import product from "../models/product";
+import connectMongo from "../middleware/connectTomongo";
 
 export default function Home({ products }) {
   console.log(products);
@@ -22,38 +23,13 @@ export default function Home({ products }) {
   );
 }
 export async function getServerSideProps(context) {
+  connectMongo();
   let products = await product.find({ category: "shirts" });
-  let data = {};
-  for (let item of products) {
-    if (item.title in data) {
-      if (
-        !data[item.title].color.includes(item.color) &&
-        item.availableQty > 0
-      ) {
-        data[item.title].color.push(item.color);
-        data[item.title].availableQty + item.availableQty;
-      }
-      if (!data[item.title].size.includes(item.size) && item.availableQty > 0) {
-        data[item.title].size.push(item.size);
-        data[item.title].availableQty + item.availableQty;
-      }
-      if (
-        (data[item.title].size.includes(item.size) && item.availableQty > 0) ||
-        (data[item.title].size.includes(item.color) && item.availableQty > 0)
-      ) {
-        data[item.title].availableQty += item.availableQty;
-      }
-    } else {
-      data[item.title] = JSON.parse(JSON.stringify(item));
-      if (item.availableQty > 0) {
-        data[item.title].color = [item.color];
-        data[item.title].size = [item.size];
-      }
-    }
-  }
+ console.log(products)
+
   // let product = await fetch("http://localhost:3000/api/getProducts/shirts");
   // let data = await product.json();
   return {
-    props: { products: JSON.parse(JSON.stringify(data)) }, // will be passed to the page component as props
+    props: {products:JSON.parse(JSON.stringify(products))}, // will be passed to the page component as props
   };
 }
