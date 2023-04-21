@@ -3,7 +3,7 @@ import Orders from "../models/orders";
 import { getCookie } from "cookies-next";
 function myOrder({ order }) {
   let u = JSON.stringify(getCookie("user"));
- 
+  console.log();
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-rows-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
@@ -63,14 +63,9 @@ function myOrder({ order }) {
   );
 }
 
-export async function getServerSideProps() {
-  // let data = await fetch("http://localhost:3000/myOrder", {
-  //   headers: {
-  //     auth: JSON.parse(getCookie("user").token),
-  //   },
-  // });
-  // let res = await data.json();
-  // console.log(res);
+export async function getServerSideProps(req, res) {
+  // let order = await data.json();
+  // console.log((getCookie("user",{req,res})));
   let order = await Orders.find({});
   return {
     props: { order: JSON.parse(JSON.stringify(order)) },

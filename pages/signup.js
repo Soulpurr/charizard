@@ -29,10 +29,9 @@ function Signup() {
         },
         body: JSON.stringify(data),
       });
-      let response = await res.json();
+
       // console.log(response);
-      setCookie("user", response, { maxAge: 30 * 24 * 60 * 60 * 1000 });
-      router.push("/login");
+
       toast.success("Your Account has been successfullly created", {
         position: "top-center",
         autoClose: 1000,
@@ -42,6 +41,7 @@ function Signup() {
         draggable: true,
         progress: undefined,
       });
+      router.push("/login");
     } catch (error) {
       toast.error(`${error}`, {
         position: "top-center",

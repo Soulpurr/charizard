@@ -106,7 +106,7 @@ function Navbar() {
         pauseOnHover
       />
       <div
-        className="flex flex-row justify-between  items-center shadow-xl"
+        className="navbar flex flex-row justify-between  items-center shadow-xl"
         key={key}
       >
         <LoadingBar
