@@ -1,18 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { useContext } from "react";
 import cartContext from "../context/cartContext";
 import CheckoutForm from "../components/checkout/CheckoutForm";
+import { getCookie } from "cookies-next";
+import { useRouter } from "next/router";
 
 const stripePromise = loadStripe(
   "pk_test_51K6w9HSCCzF8ZYwfSRDDD4DVbzHcAztUecen2zi9N7O4LakCHxHC05rZ6jIgc08QTij6LfzX0Q7RHP57GOjLIPTn00QeaGZ3Ib"
 );
-
 function Checko() {
+  const router = useRouter();
   const data = {
     price: 2000,
     name: "hello",
   };
+  useEffect(() => {
+    if (!getCookie("user")) {
+      router.push("/");
+    }
+  }, []);
 
   const handleClick = async (e) => {
     try {
